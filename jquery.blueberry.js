@@ -33,7 +33,8 @@
 				pager: true,
 				nav: true, //reserved
 				keynav: true,
-				animation: 'fade'
+				animation: 'fade',
+				slideDirection: 'down'
 			}
 			var options =  $.extend(defaults, options);
  
@@ -103,14 +104,31 @@
 					} else {
 						//slide out current slide and remove active class,
 						//slide in next slide and add active class
-						slides.eq(current).slideUp(o.duration).removeClass('active')
-							.end().eq(next).slideDown(o.duration).addClass('active').queue(function(){
+						slides.eq(current).removeClass('active').end();
+						var $last = slides.eq(current);
+						if(options.slideDirection === 'down') {
+							slides.eq(next).slideDown(o.duration, function() {
+								$last.hide(1);
+							})
+							.addClass('active').queue(function(){
 								//add rotateTimer function to end of animation queue
 								//this prevents animation buildup caused by requestAnimationFrame
 								//rotateTimer starts a timer for the next rotate
-							rotateTimer();
-							$(this).dequeue()
-						});
+								rotateTimer();
+								$(this).dequeue()
+							});
+						} else {
+							slides.eq(next).slideUp(o.duration, function() {
+								$last.hide(1);
+							})
+							.addClass('active').queue(function(){
+								//add rotateTimer function to end of animation queue
+								//this prevents animation buildup caused by requestAnimationFrame
+								//rotateTimer starts a timer for the next rotate
+								rotateTimer();
+								$(this).dequeue()
+							});
+						}
 					}
 
 					//update pager to reflect slide change
