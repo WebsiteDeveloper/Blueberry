@@ -60,7 +60,7 @@
 				var cropHeight = 0;
 
 				//hide all slides, fade in the first, add active class to first slide
-				slides.hide().eq(current).fadeIn(o.duration).addClass('active');
+				slides.hide().first().fadeIn(o.duration).addClass('active');
 				
 
 				//build pager if it doesn't already exist and if enabled
@@ -118,8 +118,9 @@
 								$(this).dequeue()
 							});
 						} else {
-							slides.eq(next).slideUp(o.duration, function() {
-								$last.hide(1);
+							slides.eq(next).css('z-index',0).show();
+							$last.css('z-index',1).slideUp(o.duration, function() {
+								//slides.eq(current).show();
 							})
 							.addClass('active').queue(function(){
 								//add rotateTimer function to end of animation queue
@@ -142,6 +143,7 @@
 					current = next;
 					next = current >= slides.length-1 ? 0 : current+1;
 				};
+
 				//create a timer to control slide rotation interval
 				var rotateTimer = function(){
 					obj.play = setTimeout(function(){
@@ -206,8 +208,6 @@
 
 					});
 				}
-
-
 			});
 		}
 	});
