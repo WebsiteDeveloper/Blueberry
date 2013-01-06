@@ -32,7 +32,8 @@
 				hoverpause: false,
 				pager: true,
 				nav: true, //reserved
-				keynav: true
+				keynav: true,
+				animation: 'fade'
 			}
 			var options =  $.extend(defaults, options);
  
@@ -88,16 +89,29 @@
 
 				//primary function to change slides
 				var rotate = function(){
-					//fade out current slide and remove active class,
-					//fade in next slide and add active class
-					slides.eq(current).fadeOut(o.duration).removeClass('active')
-						.end().eq(next).fadeIn(o.duration).addClass('active').queue(function(){
-							//add rotateTimer function to end of animation queue
-							//this prevents animation buildup caused by requestAnimationFrame
-							//rotateTimer starts a timer for the next rotate
+					if(options.animation === 'fade' || options.animation !== 'slide') {
+						//fade out current slide and remove active class,
+						//fade in next slide and add active class
+						slides.eq(current).fadeOut(o.duration).removeClass('active')
+							.end().eq(next).fadeIn(o.duration).addClass('active').queue(function(){
+								//add rotateTimer function to end of animation queue
+								//this prevents animation buildup caused by requestAnimationFrame
+								//rotateTimer starts a timer for the next rotate
 							rotateTimer();
 							$(this).dequeue()
-					});
+						});
+					} else {
+						//slide out current slide and remove active class,
+						//slide in next slide and add active class
+						slides.eq(current).slideUp(o.duration).removeClass('active')
+							.end().eq(next).slideDown(o.duration).addClass('active').queue(function(){
+								//add rotateTimer function to end of animation queue
+								//this prevents animation buildup caused by requestAnimationFrame
+								//rotateTimer starts a timer for the next rotate
+							rotateTimer();
+							$(this).dequeue()
+						});
+					}
 
 					//update pager to reflect slide change
 					if(pager){
